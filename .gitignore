@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing and Coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+*.cover
+.hypothesis/
+.tox/
+coverage.xml
+*.cover
+.cache
+nosetests.xml
+
+# Virtual environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Poetry
+.poetry/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*~
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# Project specific
+CLAUDE.md
+test_sciml.py
+polynomial_old.ipynb
+
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/
