@@ -85,6 +85,115 @@ def compare(x, y_true, models_dict, title=None, xlabel="x", ylabel="y", ax=None)
     return ax
 
 
+def plot_model_comparison(x_train, y_train, x_test, models, y_true=None, figsize=None):
+    """
+    Compare multiple models side by side.
+    
+    Parameters
+    ----------
+    x_train, y_train : arrays
+        Training data points to show
+    x_test : array
+        Test points for smooth prediction curves
+    models : dict
+        {label: model} or {label: y_pred} dictionary
+    y_true : array, optional
+        True function values at x_test
+    figsize : tuple, optional
+        Figure size (default: auto)
+    """
+    n_models = len(models)
+    if figsize is None:
+        figsize = (4 * min(n_models, 4), 4 * ((n_models - 1) // 4 + 1))
+    
+    if n_models <= 4:
+        fig, axes = plt.subplots(1, n_models, figsize=figsize)
+    else:
+        nrows = (n_models - 1) // 4 + 1
+        ncols = min(4, n_models)
+        fig, axes = plt.subplots(nrows, ncols, figsize=figsize)
+    
+    if n_models == 1:
+        axes = [axes]
+    else:
+        axes = axes.flatten() if hasattr(axes, 'flatten') else axes
+    
+    for idx, (label, model_or_pred) in enumerate(models.items()):
+        ax = axes[idx]
+        
+        # Training data
+        ax.scatter(x_train, y_train, alpha=0.6, s=30, label='Data')
+        
+        # True function if provided
+        if y_true is not None:
+            ax.plot(x_test, y_true, 'k--', alpha=0.5, label='True')
+        
+        # Model prediction
+        if hasattr(model_or_pred, 'predict'):
+            y_pred = model_or_pred.predict(x_test)
+        else:
+            y_pred = model_or_pred
+        ax.plot(x_test, y_pred, 'r-', linewidth=2, label='Model')
+        
+        ax.set_title(label)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+    
+    # Hide extra subplots if any
+    for idx in range(n_models, len(axes)):
+        axes[idx].set_visible(False)
+    
+    plt.tight_layout()
+    return fig
+
+
+def plot_metrics(x_values, y_values, xlabel='Parameter', ylabel='Metric', 
+                 title=None, log_y=False, mark_optimal=True):
+    """
+    Generic metric plotting function.
+    
+    Parameters
+    ----------
+    x_values : array
+        X-axis values (e.g., epochs, parameters, degrees)
+    y_values : array
+        Y-axis values (e.g., loss, error, accuracy)
+    xlabel, ylabel : str
+        Axis labels
+    title : str, optional
+        Plot title
+    log_y : bool
+        Use log scale for y-axis
+    mark_optimal : bool
+        Mark the optimal (minimum) point
+    """
+    fig, ax = plt.subplots(figsize=(6, 4))
+    
+    ax.plot(x_values, y_values, 'o-', linewidth=2, markersize=8)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    
+    if log_y:
+        ax.set_yscale('log')
+    
+    if title:
+        ax.set_title(title)
+    
+    ax.grid(True, alpha=0.3)
+    
+    if mark_optimal:
+        optimal_idx = np.argmin(y_values)
+        ax.scatter(x_values[optimal_idx], y_values[optimal_idx], 
+                   color='red', s=100, zorder=5, 
+                   label=f'Optimal: {x_values[optimal_idx]}')
+        ax.legend()
+    
+    plt.tight_layout()
+    return fig
+
+
 def plot_loss(losses, val_losses=None, ax=None):
     """
     Plot training (and validation) loss.
@@ -134,4 +243,11 @@ def subplots(nrows=1, ncols=1, figsize=None, **kwargs):
     return fig, axes
 
 
-__all__ = ["plot", "compare", "plot_loss", "subplots"]
+__all__ = [
+    "plot", 
+    "compare", 
+    "plot_loss", 
+    "subplots",
+    "plot_model_comparison",
+    "plot_metrics"
+]
